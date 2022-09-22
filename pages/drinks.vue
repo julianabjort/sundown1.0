@@ -16,7 +16,11 @@
             mb-4
           "
         >
-          <div v-for="drink in drinks" :key="drink.id">
+          <div v-for="drink in drinks" :key="drink.id" class="relative">
+            <div
+              v-if="drink.selected"
+              class="w-10 h-10 bg-purple-600 rounded-full absolute top-4 left-4"
+            ></div>
             <img
               @click="selectDrink(drink)"
               :src="drink.image"
@@ -45,9 +49,13 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
   created() {
     this.fetchDrinks();
+    if (this.order.isUpdating === true) {
+      this.selectedDrinks = this.order.selectedDrinks;
+    }
   },
   data() {
     return {
@@ -60,16 +68,27 @@ export default {
       const response = await fetch("https://api.punkapi.com/v2/beers");
       const drinks = await response.json();
       this.drinks = drinks.map((drink) => {
-        return { name: drink.name, image: drink.image_url, selected: false };
+        const selected = this.selectedDrinks.find(
+          (selectedDrink) => selectedDrink.name === drink.name
+        );
+        return {
+          name: drink.name,
+          image: drink.image_url,
+          selected,
+        };
       });
     },
     selectDrink(drink) {
-      this.selectedDrinks = [...this.selectedDrinks, { drink }];
+      drink.selected = true;
+      this.selectedDrinks = [...this.selectedDrinks, drink];
       this.$store.commit("setOrder", {
         key: "selectedDrinks",
         value: this.selectedDrinks,
       });
     },
+  },
+  computed: {
+    ...mapState(["order"]),
   },
 };
 </script>

@@ -19,12 +19,14 @@
       <div class="w-1/2 h-64 border-2 p-6">
         <h1 class="heading-1 mb-6">Find your order</h1>
         <label for="email" class="mb-2">Enter e-mail</label>
+        <p v-for="error in errors" :key="error">{{ error }}</p>
         <input
           type="text"
+          v-model="inputEmail"
           name="email"
           class="w-full border-2 rounded-xl my-2 p-1"
         />
-        <button class="btn-primary w-1/2">Find</button>
+        <button @click="updateOrder" class="btn-primary w-1/2">Find</button>
       </div>
 
       <!-- content box -->
@@ -36,5 +38,28 @@
 </template>
 
 <script>
-export default {};
+export default {
+  data() {
+    return {
+      inputEmail: "",
+      errors: [],
+    };
+  },
+  methods: {
+    updateOrder() {
+      this.errors = [];
+      let allOrders = JSON.parse(localStorage.getItem("orders"));
+      const order = allOrders.find(
+        (order) => order.orderEmail === this.inputEmail
+      );
+      if (order) {
+        order.isUpdating = true;
+        this.$store.commit("setUpdateOrder", order);
+        this.$router.push("/dish");
+      } else {
+        this.errors.push("Order does not exist");
+      }
+    },
+  },
+};
 </script>

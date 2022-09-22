@@ -1,22 +1,24 @@
 export const state = () => {
     return {
-        dishTitle: '',
         order: {
             dishTitle: '',
             dishImage: '',
             dishDesc:'',
             selectedDrinks: [],
             orderDate: null,
-            amountOfPeople: null,
-            orderEmail: ''
+            amountOfPeople: 1,
+            orderEmail: '',
+            isUpdating: false
         }
     }
 }
 
 export const mutations = {
-    
     setOrder(state, {key, value}) {
         state.order[key] = value 
     },
-   
+    setUpdateOrder(state, value) {
+        state.order = value 
+    },
 }
+

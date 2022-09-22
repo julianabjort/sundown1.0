@@ -32,9 +32,15 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
   created() {
-    this.fetchDish();
+    if (this.order.isUpdating === false) this.fetchDish();
+    else {
+      this.dishTitle = this.order.dishTitle;
+      this.dishImage = this.order.dishImage;
+      this.dishDesc = this.order.dishDesc;
+    }
   },
   data() {
     return {
@@ -65,6 +71,9 @@ export default {
         value: this.dishDesc,
       });
     },
+  },
+  computed: {
+    ...mapState(["order"]),
   },
 };
 </script>
