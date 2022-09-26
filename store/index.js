@@ -22,3 +22,8 @@ export const mutations = {
     },
 }
 
+export const getters = {
+    dishCompleted: (state) => state.order.dishTitle && state.order.dishImage && state.order.dishDesc ? true : false,
+    orderCompleted: (state) => state.order.orderDate && state.order.amountOfPeople && state.order.orderEmail ? true : false,
+}
+

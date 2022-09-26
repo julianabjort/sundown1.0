@@ -1,8 +1,8 @@
 <template>
-  <div class="flex flex-col space-y-10">
-    <div class="flex space-x-10">
+  <div class="flex flex-col space-y-6">
+    <div class="flex space-x-6">
       <!-- Drinks images-->
-      <div class="w-3/4 h-screen border-2 p-6 overflow-auto">
+      <div class="w-3/4 h-screen border-2 rounded-lg p-1 overflow-auto">
         <div
           class="
             w-full
@@ -18,21 +18,47 @@
         >
           <div v-for="drink in drinks" :key="drink.id" class="relative">
             <div
-              v-if="drink.selected"
-              class="w-10 h-10 bg-purple-600 rounded-full absolute top-4 left-4"
-            ></div>
-            <img
               @click="selectDrink(drink)"
-              :src="drink.image"
-              alt="drink"
               class="
-                rounded-md
+                z-0
                 w-full
-                cursor-pointer
-                object-cover
                 aspect-square
+                relative
+                cursor-pointer
+                rounded-lg
+                bg-gray-100
+                py-2
+                shadow-sm
               "
-            />
+            >
+              <div v-if="drink.selected">
+                <MdCheckmarkCircleIcon
+                  w="35px"
+                  h="35px"
+                  class="
+                    absolute
+                    top-2
+                    right-2
+                    fill-green-600
+                    z-20
+                    cursor-pointer
+                  "
+                />
+              </div>
+              <img
+                :src="drink.image"
+                alt="drink"
+                class="
+                  rounded-md
+                  w-auto
+                  cursor-pointer
+                  object-fit
+                  h-full
+                  z-10
+                  m-auto
+                "
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -40,17 +66,29 @@
       <!-- Next box -->
       <div class="w-1/4 h-64 border-2 p-6 flex flex-col justify-between">
         <h1 class="heading-1">Pick date and amount</h1>
-        <NuxtLink to="/order">
-          <button class="btn-primary w-full">Next</button>
-        </NuxtLink>
+        <p v-for="error in errors" :key="error" class="error">
+          {{ error }}
+        </p>
+        <button @click="completeDrinksOrder" class="btn-primary w-full">
+          Next
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import MdCheckmarkCircleIcon from "vue-ionicons/dist/md-checkmark-circle.vue";
 import { mapState } from "vuex";
 export default {
+  components: {
+    MdCheckmarkCircleIcon,
+  },
+  middleware({ store, redirect }) {
+    if (store.getters.dishCompleted === false) {
+      return redirect("/");
+    }
+  },
   created() {
     this.fetchDrinks();
     if (this.order.isUpdating === true) {
@@ -61,6 +99,7 @@ export default {
     return {
       drinks: [],
       selectedDrinks: [],
+      errors: [],
     };
   },
   methods: {
@@ -79,13 +118,33 @@ export default {
       });
     },
     selectDrink(drink) {
-      drink.selected = true;
-      this.selectedDrinks = [...this.selectedDrinks, drink];
+      console.log(drink.name);
+      if (!drink.selected) {
+        drink.selected = true;
+        this.selectedDrinks = [...this.selectedDrinks, drink];
+      } else {
+        this.selectedDrinks = this.selectedDrinks.filter(
+          (selectedDrink) => selectedDrink.name !== drink.name
+        );
+        drink.selected = false;
+      }
+    },
+
+    completeDrinksOrder() {
       this.$store.commit("setOrder", {
         key: "selectedDrinks",
         value: this.selectedDrinks,
       });
+      this.$router.push("/order");
     },
+    // checkInputs() {
+    //   this.errors = [];
+    //   if (this.selectedDrinks.length) {
+
+    //   } else {
+    //     this.errors.push("Please select at least one drink");
+    //   }
+    // },
   },
   computed: {
     ...mapState(["order"]),

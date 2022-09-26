@@ -1,13 +1,41 @@
 <template>
   <div class="flex flex-col space-y-10">
-    <div class="flex space-x-10">
+    <div class="flex space-x-10 h-80">
       <!-- Image carousel -->
-      <div class="w-3/4 h-64 border-2 p-6">
-        <h1 class="heading-1">Images</h1>
+      <div class="w-2/3">
+        <ssr-carousel loop show-dots show-arrows>
+          <div :index="1">
+            <img
+              src="../assets/images/meal1.jpeg"
+              alt=""
+              class="w-full object-cover h-80 rounded-md"
+            />
+          </div>
+          <div :index="2">
+            <img
+              src="../assets/images/meal2.jpeg"
+              alt=""
+              class="w-full h-80 object-cover rounded-md"
+            />
+          </div>
+          <div :index="3">
+            <img
+              src="../assets/images/meal3.jpeg"
+              alt=""
+              class="w-full h-80 object-cover rounded-md"
+            />
+          </div>
+          <div :index="4">
+            <img
+              src="../assets/images/meal4.jpeg"
+              alt=""
+              class="w-full h-80 object-cover rounded-md"
+            />
+          </div>
+        </ssr-carousel>
       </div>
-
       <!-- Order flow box -->
-      <div class="w-1/4 h-64 border-2 p-6 flex flex-col justify-between">
+      <div class="w-1/3 border-2 p-6 flex flex-col justify-between">
         <h1 class="heading-1">Order flow box</h1>
         <NuxtLink to="/dish">
           <button class="btn-primary w-full">Order</button>
@@ -49,15 +77,23 @@ export default {
     updateOrder() {
       this.errors = [];
       let allOrders = JSON.parse(localStorage.getItem("orders"));
-      const order = allOrders.find(
+      const orders = allOrders.filter(
         (order) => order.orderEmail === this.inputEmail
       );
-      if (order) {
+
+      const order = orders[0];
+      if (orders.length === 1) {
         order.isUpdating = true;
-        this.$store.commit("setUpdateOrder", order);
+        this.$store.commit("setOrder", order);
         this.$router.push("/dish");
+      } else if (orders.length > 1) {
+        this.$store.commit("setOrder", {
+          key: "orderEmail",
+          value: order.orderEmail,
+        });
+        this.$router.push("/orders-overview");
       } else {
-        this.errors.push("Order does not exist");
+        this.errors.push("No orders associated with this email");
       }
     },
   },

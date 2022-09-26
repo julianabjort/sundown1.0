@@ -1,6 +1,6 @@
 <template>
-  <div class="flex flex-col space-y-10">
-    <div class="flex space-x-10">
+  <div class="flex flex-col space-y-6">
+    <div class="flex space-x-6">
       <!-- Dish Image-->
 
       <div class="w-3/4 h-64">

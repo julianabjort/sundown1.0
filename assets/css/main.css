@@ -7,5 +7,9 @@
 }
 
 .btn-primary {
-  @apply py-2 bg-black text-white rounded-xl;
+  @apply py-2 bg-primary text-white rounded-xl;
+}
+
+.error {
+  @apply text-red-500 text-xs uppercase;
 }
